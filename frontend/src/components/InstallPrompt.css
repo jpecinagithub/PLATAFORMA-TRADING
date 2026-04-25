@@ -1,0 +1,45 @@
+.install-banner {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  z-index: 1000;
+  white-space: nowrap;
+  max-width: calc(100vw - 32px);
+}
+
+.install-icon { font-size: 20px; flex-shrink: 0; }
+
+.install-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.install-btn { padding: 6px 14px; font-size: 13px; flex-shrink: 0; }
+
+.install-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.install-close:hover { color: var(--text); }
+
+@media (min-width: 769px) {
+  .install-banner { bottom: 24px; }
+}

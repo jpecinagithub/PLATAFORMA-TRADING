@@ -10,6 +10,7 @@ import StockDetail from './pages/StockDetail';
 import History from './pages/History';
 import Watchlist from './pages/Watchlist';
 import Layout from './components/Layout';
+import InstallPrompt from './components/InstallPrompt';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/trading/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
+      <InstallPrompt />
     </AuthProvider>
   );
 }

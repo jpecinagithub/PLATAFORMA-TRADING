@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#0f1117"/>
+  <!-- candlestick chart -->
+  <!-- candle 1 (green) -->
+  <rect x="80" y="260" width="8" height="120" fill="#3fb950" rx="2"/>
+  <rect x="72" y="300" width="24" height="60" fill="#3fb950" rx="3"/>
+  <!-- candle 2 (red) -->
+  <rect x="148" y="200" width="8" height="140" fill="#f85149" rx="2"/>
+  <rect x="140" y="220" width="24" height="80" fill="#f85149" rx="3"/>
+  <!-- candle 3 (green) -->
+  <rect x="216" y="180" width="8" height="160" fill="#3fb950" rx="2"/>
+  <rect x="208" y="210" width="24" height="90" fill="#3fb950" rx="3"/>
+  <!-- candle 4 (green) -->
+  <rect x="284" y="140" width="8" height="130" fill="#3fb950" rx="2"/>
+  <rect x="276" y="160" width="24" height="70" fill="#3fb950" rx="3"/>
+  <!-- candle 5 (red) -->
+  <rect x="352" y="160" width="8" height="150" fill="#f85149" rx="2"/>
+  <rect x="344" y="180" width="24" height="85" fill="#f85149" rx="3"/>
+  <!-- candle 6 (green) -->
+  <rect x="420" y="120" width="8" height="160" fill="#3fb950" rx="2"/>
+  <rect x="412" y="145" width="24" height="90" fill="#3fb950" rx="3"/>
+  <!-- trend line -->
+  <polyline points="84,340 152,280 220,250 288,200 356,220 424,170"
+    fill="none" stroke="#58a6ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+</svg>
