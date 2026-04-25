@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# Local env
+.env
+.env.local
+
+# Uploads / temp
+uploads/
+tmp/

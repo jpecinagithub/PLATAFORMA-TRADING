@@ -1,0 +1,44 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: trading-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: trading_db
+      MYSQL_USER: trading_user
+      MYSQL_PASSWORD: trading_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - trading_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: trading-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 3007
+      NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: trading_user
+      DB_PASSWORD: trading_pass
+      DB_NAME: trading_db
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: 7d
+      FINNHUB_API_KEY: ${FINNHUB_API_KEY}
+      INITIAL_BALANCE: 100000
+    ports:
+      - "3007:3007"
+
+volumes:
+  trading_db_data:
