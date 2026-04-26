@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const authRoutes = require('./routes/auth');
 const stockRoutes = require('./routes/stocks');
@@ -10,8 +11,21 @@ const watchlistRoutes = require('./routes/watchlist');
 
 const app = express();
 
-app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
+const ALLOWED_ORIGINS = (process.env.FRONTEND_URL || 'http://localhost:5174')
+  .split(',')
+  .map((o) => o.trim());
+
+app.use(cors({
+  origin: (origin, cb) => {
+    // allow server-to-server calls (no origin) and whitelisted origins
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    cb(new Error(`CORS: origin ${origin} not allowed`));
+  },
+  credentials: true,
+}));
+
 app.use(express.json());
+app.use(cookieParser());
 
 app.get('/api/health', (_, res) => res.json({ status: 'ok' }));
 

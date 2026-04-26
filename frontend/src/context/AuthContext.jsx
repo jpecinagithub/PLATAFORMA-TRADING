@@ -10,23 +10,26 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) { setLoading(false); return; }
-
+    // verify session via cookie — no token check needed
     api.get('/auth/me')
-      .then((res) => setUser(res.data))
-      .catch(() => { localStorage.removeItem('token'); localStorage.removeItem('user'); })
+      .then((res) => {
+        setUser(res.data);
+        localStorage.setItem('user', JSON.stringify(res.data));
+      })
+      .catch(() => {
+        setUser(null);
+        localStorage.removeItem('user');
+      })
       .finally(() => setLoading(false));
   }, []);
 
-  function login(token, userData) {
-    localStorage.setItem('token', token);
+  function login(userData) {
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   }
 
-  function logout() {
-    localStorage.removeItem('token');
+  async function logout() {
+    try { await api.post('/auth/logout'); } catch { /* ignore */ }
     localStorage.removeItem('user');
     setUser(null);
   }

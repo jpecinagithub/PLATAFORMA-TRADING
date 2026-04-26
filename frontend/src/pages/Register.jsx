@@ -17,7 +17,7 @@ export default function Register() {
     setLoading(true);
     try {
       const { data } = await api.post('/auth/register', form);
-      login(data.token, data.user);
+      login(data.user);
       navigate('/trading/dashboard');
     } catch (err) {
       const errors = err.response?.data?.errors;

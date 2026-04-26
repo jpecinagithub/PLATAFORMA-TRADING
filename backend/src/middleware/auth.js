@@ -1,11 +1,9 @@
 const jwt = require('jsonwebtoken');
 
 function verifyToken(req, res, next) {
-  const header = req.headers['authorization'];
-  if (!header) return res.status(401).json({ error: 'No token provided' });
-
-  const token = header.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'Malformed token' });
+  // httpOnly cookie takes priority; Authorization header as fallback (dev/mobile)
+  const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
   try {
     req.user = jwt.verify(token, process.env.JWT_SECRET);

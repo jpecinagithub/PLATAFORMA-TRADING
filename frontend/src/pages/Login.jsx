@@ -17,7 +17,7 @@ export default function Login() {
     setLoading(true);
     try {
       const { data } = await api.post('/auth/login', form);
-      login(data.token, data.user);
+      login(data.user);
       navigate('/trading/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Error al iniciar sesión');

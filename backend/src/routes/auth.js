@@ -6,6 +6,21 @@ const pool = require('../config/db');
 
 const router = express.Router();
 
+const COOKIE_OPTS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: '/',
+};
+
+function issueToken(res, payload) {
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  });
+  res.cookie('token', token, COOKIE_OPTS);
+}
+
 router.post('/register', [
   body('username').trim().isLength({ min: 3, max: 50 }).withMessage('Username must be 3-50 characters'),
   body('email').isEmail().normalizeEmail().withMessage('Invalid email'),
@@ -37,13 +52,9 @@ router.post('/register', [
       [userId, process.env.INITIAL_BALANCE || 100000]
     );
 
-    const token = jwt.sign(
-      { id: userId, username, email },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-    );
-
-    res.status(201).json({ token, user: { id: userId, username, email } });
+    const user = { id: userId, username, email };
+    issueToken(res, user);
+    res.status(201).json({ user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Registration failed' });
@@ -63,21 +74,22 @@ router.post('/login', [
     const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
     if (rows.length === 0) return res.status(401).json({ error: 'Invalid credentials' });
 
-    const user = rows[0];
-    const valid = await bcrypt.compare(password, user.password_hash);
+    const dbUser = rows[0];
+    const valid = await bcrypt.compare(password, dbUser.password_hash);
     if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
 
-    const token = jwt.sign(
-      { id: user.id, username: user.username, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-    );
-
-    res.json({ token, user: { id: user.id, username: user.username, email: user.email } });
+    const user = { id: dbUser.id, username: dbUser.username, email: dbUser.email };
+    issueToken(res, user);
+    res.json({ user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Login failed' });
   }
+});
+
+router.post('/logout', (req, res) => {
+  res.clearCookie('token', { path: '/' });
+  res.json({ ok: true });
 });
 
 router.get('/me', require('../middleware/auth'), async (req, res) => {
