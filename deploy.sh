@@ -19,7 +19,10 @@ scp -r frontend/dist/* "$ORACLE_USER@$ORACLE_HOST:$REMOTE_FRONTEND/"
 echo "==> [3/5] Uploading backend..."
 ssh "$ORACLE_USER@$ORACLE_HOST" "mkdir -p $REMOTE_BACKEND"
 scp docker-compose.yml "$ORACLE_USER@$ORACLE_HOST:$REMOTE_BACKEND/"
-scp -r backend "$ORACLE_USER@$ORACLE_HOST:$REMOTE_BACKEND/"
+tar -czf /tmp/trading-backend.tar.gz --exclude='backend/node_modules' --exclude='backend/.env' backend/
+scp /tmp/trading-backend.tar.gz "$ORACLE_USER@$ORACLE_HOST:$REMOTE_BACKEND/"
+ssh "$ORACLE_USER@$ORACLE_HOST" "cd $REMOTE_BACKEND && tar -xzf trading-backend.tar.gz && rm trading-backend.tar.gz"
+rm /tmp/trading-backend.tar.gz
 
 echo "==> [4/5] Uploading .env..."
 scp .env "$ORACLE_USER@$ORACLE_HOST:$REMOTE_BACKEND/.env"

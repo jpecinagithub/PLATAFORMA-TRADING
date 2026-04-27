@@ -12,8 +12,13 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('user');
-      window.location.href = '/trading/login';
+      const url = err.config?.url || '';
+      const onAuthPage = /\/(login|register)/.test(window.location.pathname);
+      // Don't redirect on session-check or when already on auth pages
+      if (!url.includes('/auth/me') && !onAuthPage) {
+        localStorage.removeItem('user');
+        window.location.href = '/trading/login';
+      }
     }
     return Promise.reject(err);
   }

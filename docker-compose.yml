@@ -37,6 +37,7 @@ services:
       JWT_EXPIRES_IN: 7d
       FINNHUB_API_KEY: ${FINNHUB_API_KEY}
       INITIAL_BALANCE: 100000
+      FRONTEND_URL: ${FRONTEND_URL}
     ports:
       - "3007:3007"
 
