@@ -1,15 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { fmt, fmtPct } from '../utils/fmt';
 import './Dashboard.css';
 import './Portfolio.css';
-
-function fmt(n) {
-  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(n);
-}
-function fmtPct(n) {
-  return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
-}
 
 export default function Portfolio() {
   const [portfolio, setPortfolio] = useState(null);

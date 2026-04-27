@@ -2,11 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { createChart, ColorType } from 'lightweight-charts';
 import api from '../services/api';
+import { fmt } from '../utils/fmt';
 import './StockDetail.css';
-
-function fmt(n) {
-  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(n);
-}
 
 const RESOLUTIONS = [
   { label: '1D',  value: '5',  days: 1   },
@@ -36,21 +33,29 @@ export default function StockDetail() {
   const [chartError, setChartError] = useState('');
 
   useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
     Promise.all([
-      api.get(`/stocks/quote/${symbol}`),
-      api.get(`/stocks/profile/${symbol}`),
-      api.get(`/stocks/news/${symbol}`),
-      api.get('/watchlist'),
+      api.get(`/stocks/quote/${symbol}`, { signal }),
+      api.get(`/stocks/profile/${symbol}`, { signal }),
+      api.get(`/stocks/news/${symbol}`, { signal }),
+      api.get('/watchlist', { signal }),
     ]).then(([q, p, n, w]) => {
       setQuote(q.data);
       setProfile(p.data);
       setNews(n.data);
       setInWatchlist(w.data.some((i) => i.symbol === symbol.toUpperCase()));
+    }).catch((err) => {
+      if (err.code !== 'ERR_CANCELED') console.error(err);
     });
+    return () => controller.abort();
   }, [symbol]);
 
   useEffect(() => {
     if (!chartRef.current) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
 
     setChartError('');
     setLoadingChart(true);
@@ -83,7 +88,7 @@ export default function StockDetail() {
     const to = Math.floor(Date.now() / 1000);
     const from = to - resolution.days * 24 * 60 * 60;
 
-    api.get(`/stocks/candles/${symbol}`, { params: { resolution: resolution.value, from, to } })
+    api.get(`/stocks/candles/${symbol}`, { params: { resolution: resolution.value, from, to }, signal })
       .then(({ data }) => {
         if (data.s === 'ok' && data.t?.length > 0) {
           const candles = data.t.map((t, i) => ({
@@ -97,10 +102,12 @@ export default function StockDetail() {
           setChartError('Sin datos para este período. Prueba otro rango.');
         }
       })
-      .catch(() => setChartError('Error cargando datos del gráfico.'))
+      .catch((err) => {
+        if (err.code !== 'ERR_CANCELED') setChartError('Error cargando datos del gráfico.');
+      })
       .finally(() => setLoadingChart(false));
 
-    return () => { ro.disconnect(); chart.remove(); };
+    return () => { controller.abort(); ro.disconnect(); chart.remove(); };
   }, [symbol, resolution]);
 
   async function handleTrade(e) {

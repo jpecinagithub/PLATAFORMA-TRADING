@@ -48,6 +48,7 @@ export default defineConfig({
       workbox: {
         navigateFallback: '/trading/index.html',
         navigateFallbackDenylist: [/^\/api/],
+        // API calls must never be intercepted by the SW — always go to network
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com/,
@@ -55,15 +56,6 @@ export default defineConfig({
             options: {
               cacheName: 'google-fonts',
               expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
-            },
-          },
-          {
-            urlPattern: /\/api\/trading\//,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 5 },
-              networkTimeoutSeconds: 10,
             },
           },
         ],

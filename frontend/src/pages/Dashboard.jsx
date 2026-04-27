@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { fmt, fmtPct } from '../utils/fmt';
 import './Dashboard.css';
 
 function StatCard({ label, value, sub, color }) {
@@ -12,13 +13,6 @@ function StatCard({ label, value, sub, color }) {
       {sub && <div className="stat-sub">{sub}</div>}
     </div>
   );
-}
-
-function fmt(n) {
-  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(n);
-}
-function fmtPct(n) {
-  return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
 }
 
 export default function Dashboard() {

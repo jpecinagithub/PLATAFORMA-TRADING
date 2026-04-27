@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { fmt } from '../utils/fmt';
 import './History.css';
-
-function fmt(n) {
-  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(n);
-}
 
 export default function History() {
   const [txs, setTxs] = useState([]);

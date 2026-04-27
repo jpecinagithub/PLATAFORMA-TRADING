@@ -1,13 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { fmt } from '../utils/fmt';
 import './Market.css';
 
 const POPULAR = ['AAPL','MSFT','GOOGL','AMZN','TSLA','NVDA','META','JPM','V','JNJ'];
-
-function fmt(n) {
-  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(n);
-}
 
 export default function Market() {
   const [query, setQuery] = useState('');

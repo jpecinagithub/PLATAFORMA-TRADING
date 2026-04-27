@@ -3,11 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import './Watchlist.css';
 
-function fmt(n) {
-  return n != null
-    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(n)
-    : '—';
-}
+import { fmt } from '../utils/fmt';
 
 export default function Watchlist() {
   const [items, setItems] = useState([]);

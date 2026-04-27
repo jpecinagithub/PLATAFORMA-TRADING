@@ -10,8 +10,15 @@ function client() {
   });
 }
 
+// In-memory quote cache — avoids N Finnhub calls per portfolio/watchlist load
+const quoteCache = new Map(); // symbol → { data, ts }
+const QUOTE_TTL = 60 * 1000; // 60 seconds
+
 async function quote(symbol) {
+  const cached = quoteCache.get(symbol);
+  if (cached && Date.now() - cached.ts < QUOTE_TTL) return cached.data;
   const { data } = await client().get('/quote', { params: { symbol } });
+  quoteCache.set(symbol, { data, ts: Date.now() });
   return data;
 }
 
